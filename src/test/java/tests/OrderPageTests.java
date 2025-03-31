@@ -32,15 +32,6 @@ public class OrderPageTests {
 
     /**
      * Контруктор класса OrderPageTests
-     * @param name Имя
-     * @param surname Фамилия
-     * @param address Адрес
-     * @param metro  Метро
-     * @param phone Телефон
-     * @param date Дата
-     * @param term Срочность аренды
-     * @param color Цвет
-     * @param comment Комментарий
      */
     public OrderPageTests(
             String name,
@@ -72,15 +63,13 @@ public class OrderPageTests {
     public static Object[][] setDataForOrder() {
         return new Object[][] {
                 {"Клава", "Птичкина", "Москва, ул. Дорожная, д. 12, кв. 34", "Сокол", "81234567890", "01.05.2023", "четверо суток", "чёрный жемчуг", "Коммент!"},
-                {"Иван ", "Петров", "Москва, ул. Скобелевская, д. 26, кв. 1", "Улица Скобелевская", "89876543210", "21.05.2023", "трое суток", "серая безысходность", "Привезите в первой половине дня"},
+                {"Иван", "Петров", "Москва, ул. Скобелевская, д. 26, кв. 1", "Улица Скобелевская", "89876543210", "21.05.2023", "трое суток", "серая безысходность", "Привезите в первой половине дня"},
         };
     }
 
     @Before
     public void startUp() {
-//        WebDriverManager.chromedriver().setup();
-        this.webDriver = new ChromeDriver();    // здесь тест падает на подтверждении оформления заказа
-        //webDriver = new SafariDriver();       // здесь тест проходит успешно
+        this.webDriver = new ChromeDriver();
         this.webDriver.get(mainPageUrl);
     }
 
@@ -89,9 +78,6 @@ public class OrderPageTests {
         this.webDriver.quit();
     }
 
-    /**
-     * Тест для проверки процесса оформления заказа после нажатия на кнопку "Заказать" в шапке
-     */
     @Test
     public void orderWithHeaderButtonWhenSuccess() {
         MainPage mainPage = new MainPage(this.webDriver);
@@ -99,7 +85,7 @@ public class OrderPageTests {
 
         mainPage.clickOnCookieAcceptButton();
         mainPage.clickOrderButtonHeader();
-        makeOrder(orderPage);
+        orderPage.makeOrder(this.name, this.surname, this.address, this.metro, this.phone, this.date, this.term, this.color, this.comment);
 
         MatcherAssert.assertThat(
                 "Problem with creating a new order",
@@ -108,9 +94,6 @@ public class OrderPageTests {
         );
     }
 
-    /**
-     * Тест для проверки процесса оформления заказа после нажатия на кнопку "Заказать" в теле сайта
-     */
     @Test
     public void orderWithBodyButtonWhenSuccess() {
         MainPage mainPage = new MainPage(this.webDriver);
@@ -118,35 +101,12 @@ public class OrderPageTests {
 
         mainPage.clickOnCookieAcceptButton();
         mainPage.clickOrderButtonBody();
-        makeOrder(orderPage);
+        orderPage.makeOrder(this.name, this.surname, this.address, this.metro, this.phone, this.date, this.term, this.color, this.comment);
 
         MatcherAssert.assertThat(
                 "Problem with creating a new order",
                 orderPage.getNewOrderSuccessMessage(),
                 containsString(this.expectedOrderSuccessText)
         );
-    }
-
-    /**
-     * Метод, описывающий процедуру оформления заказа
-     * @param orderPage экземпляр образа страницы заказа
-     */
-    private void makeOrder(OrderPage orderPage) {
-        orderPage.waitForLoadForm();
-
-        orderPage.setName(this.name);
-        orderPage.setSurname(this.surname);
-        orderPage.setAddress(this.address);
-        orderPage.setMetro(this.metro);
-        orderPage.setPhone(this.phone);
-
-        orderPage.clickNextButton();
-
-        orderPage.setDate(this.date);
-        orderPage.setTerm(this.term);
-        orderPage.setColor(this.color);
-        orderPage.setComment(this.comment);
-
-        orderPage.makeOrder();
     }
 }
